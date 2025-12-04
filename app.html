@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor - ParticleForge</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- UI LAYER -->
+    <div class="ui-layer">
+        <nav class="navbar" style="background:transparent; border:none; padding-top: 20px;">
+            <div class="logo">ParticleForge <span style="font-size:12px; color:#aaa;">EDITOR</span></div>
+            <a href="index.html" style="pointer-events:auto; border:1px solid white; padding:8px 20px; border-radius:4px; text-decoration:none; color:white; font-size: 14px;">Back to Home</a>
+        </nav>
+        
+        <!-- THE COPY BUTTON -->
+        <button id="export-btn" onclick="copyCode()">⚡ COPY CODE</button>
+    </div>
+
+    <!-- THE 3D CANVAS -->
+    <div id="canvas-container"></div>
+
+    <!-- THREE.JS APPLICATION -->
+    <script type="module">
+        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+        import GUI from 'https://unpkg.com/lil-gui@0.19.1/dist/lil-gui.esm.min.js';
+
+        // 1. CONFIGURATION
+        const params = {
+            count: 2000,
+            size: 0.5,
+            color: '#00e5ff',
+            speed: 0.2
+        };
+
+        // 2. SCENE SETUP
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050505, 0.002);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
+        camera.position.z = 800;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // 3. TEXTURE GENERATION
+        function getTexture() {
+            const c = document.createElement('canvas'); c.width = 32; c.height = 32;
+            const ctx = c.getContext('2d');
+            const g = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+            g.addColorStop(0, 'rgba(255,255,255,1)');
+            g.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = g; ctx.fillRect(0, 0, 32, 32);
+            return new THREE.Texture(c);
+        }
+        const tex = getTexture(); 
+        tex.needsUpdate = true;
+
+        // 4. PARTICLE SYSTEM
+        let particles, geo, mat;
+
+        function initParticles() {
+            if (particles) { 
+                scene.remove(particles); 
+                geo.dispose(); 
+                mat.dispose(); 
+            }
+
+            geo = new THREE.BufferGeometry();
+            const pos = [];
+            for (let i = 0; i < params.count; i++) {
+                pos.push(
+                    (Math.random() - 0.5) * 2000, 
+                    (Math.random() - 0.5) * 2000, 
+                    (Math.random() - 0.5) * 2000
+                );
+            }
+            geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+
+            mat = new THREE.PointsMaterial({
+                size: params.size * 10, 
+                color: params.color, 
+                map: tex,
+                transparent: true, 
+                blending: THREE.AdditiveBlending, 
+                depthWrite: false
+            });
+
+            particles = new THREE.Points(geo, mat);
+            scene.add(particles);
+        }
+        initParticles();
+
+        // 5. GUI CONTROLS
+        const gui = new GUI({ title: 'Settings' });
+        gui.add(params, 'count', 500, 5000, 100).onFinishChange(initParticles);
+        gui.addColor(params, 'color').onChange(v => mat.color.set(v));
+        gui.add(params, 'size', 0.1, 2).onChange(v => mat.size = v * 10);
+        gui.add(params, 'speed', 0, 2);
+
+        // 6. ANIMATION LOOP
+        function animate() {
+            requestAnimationFrame(animate);
+            particles.rotation.y += params.speed * 0.005;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // RESIZE HANDLER
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // 7. COPY CODE FUNCTION
+        window.copyCode = function() {
+            const sourceCode = `
+<!-- 3D Particle Effect -->
+<script type="module">
+  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+  // Copy the rest of the logic here...
+<\/script>`;
+            
+            const btn = document.getElementById('export-btn');
+            const originalText = btn.innerText;
+            
+            btn.innerText = "✅ COPIED!";
+            btn.style.background = "#00ff00";
+            btn.style.color = "#000";
+
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.background = "white";
+                btn.style.color = "black";
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
