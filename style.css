@@ -1,0 +1,118 @@
+/* GLOBAL STYLES */
+:root {
+    --primary: #00e5ff;
+    --bg: #050505;
+    --surface: #111;
+    --text: #eee;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+a { text-decoration: none; color: white; }
+
+/* NAVIGATION */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    background: rgba(0,0,0,0.8);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+    box-sizing: border-box;
+    border-bottom: 1px solid #333;
+}
+
+.logo { font-size: 1.5rem; font-weight: bold; color: var(--primary); letter-spacing: 2px; }
+
+.nav-links a { margin-left: 20px; font-weight: 500; transition: color 0.3s; }
+.nav-links a:hover { color: var(--primary); }
+
+.btn-primary {
+    background: var(--primary);
+    color: #000 !important;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+.btn-primary:hover { box-shadow: 0 0 15px var(--primary); }
+
+/* HERO SECTION */
+.hero {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+    padding-top: 60px;
+}
+
+.hero h1 { font-size: 3.5rem; margin-bottom: 20px; }
+.highlight { color: var(--primary); }
+.hero p { font-size: 1.2rem; color: #aaa; max-width: 600px; margin: 0 auto 40px auto; }
+.btn-large { padding: 15px 40px; font-size: 1.2rem; }
+
+/* FEATURES GRID */
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card {
+    background: var(--surface);
+    padding: 30px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    transition: transform 0.2s;
+}
+.card:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+/* FOOTER */
+footer {
+    text-align: center;
+    padding: 40px;
+    color: #555;
+    border-top: 1px solid #222;
+}
+
+/* APP SPECIFIC (UI LAYER) */
+#canvas-container { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 0; }
+
+.ui-layer {
+    position: relative;
+    z-index: 10;
+    pointer-events: none; /* Let clicks pass through to canvas */
+}
+
+/* THE EXPORT BUTTON */
+#export-btn {
+    pointer-events: auto;
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    color: black;
+    border: none;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    transition: all 0.2s ease;
+}
+#export-btn:hover { transform: translateX(-50%) scale(1.05); }
